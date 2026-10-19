@@ -18,6 +18,7 @@ class Settings(BaseSettings):
         env_file_encoding="utf-8",
         extra="ignore"
     )
+    schema_retrieval_enabled: bool = False
 
 
 settings=Settings()

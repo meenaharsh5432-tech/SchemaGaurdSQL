@@ -18,7 +18,7 @@ from app.schemas.query import QueryResponse
 
 
 # Increment when prompts, generation settings, or query policy change.
-POLICY_VERSION = "query-policy-v1"
+POLICY_VERSION = "query-policy-v3-existence-example"
 
 
 def query_cache_key(question: str, schema_version: str) -> str:
@@ -52,7 +52,10 @@ def query_cache_key(question: str, schema_version: str) -> str:
         authorization_scope=authorization_scope,
         schema_version=schema_version,
         model=settings.ollama_model,
-        policy_version=POLICY_VERSION,
+        policy_version=(
+    f"{POLICY_VERSION}:"
+    f"{'retrieval-v1' if settings.schema_retrieval_enabled else 'full-schema'}"
+),
     )
 
 

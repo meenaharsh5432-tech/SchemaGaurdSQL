@@ -54,9 +54,11 @@ async def evaluate_case(case, expected):
     original_generate = workflow.generate_sql
 
     async def counted_generate(*args, **kwargs):
-        nonlocal generation_calls
+        nonlocal generation_calls, generated_sql
         generation_calls += 1
-        return await original_generate(*args, **kwargs)
+        generated = await original_generate(*args, **kwargs)
+        generated_sql = generated.sql
+        return generated
 
     started = perf_counter()
     correct = False
@@ -75,8 +77,9 @@ async def evaluate_case(case, expected):
             case["ordered"],
         )
     except Exception as exc:
-        # Record failure and continue evaluating the remaining cases.
         error_type = type(exc).__name__
+        print(f"  Error: {exc}")
+        print(f"  Generated SQL: {generated_sql}")
 
     latency_ms = round((perf_counter() - started) * 1000, 2)
     repair_attempts = max(0, generation_calls - 1)
@@ -170,6 +173,7 @@ async def main():
             "system_prompt_sha256": hashlib.sha256(
                 SYSTEM_PROMPT.encode("utf-8")
             ).hexdigest(),
+            "schema_retrieval_enabled": settings.schema_retrieval_enabled,
             "cases_file": cases_path.name,
             "cases_sha256": hashlib.sha256(
                 json.dumps(

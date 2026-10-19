@@ -47,6 +47,17 @@ jobs:
           docker compose exec -T postgres \
             psql -U sg_admin -d schemaguard \
             -v ON_ERROR_STOP=1 < database/002_audit.sql
+      - name: Initialize expanded business schema
+        run: |
+          docker compose exec -T postgres \
+            psql -U sg_admin -d schemaguard \
+            -v ON_ERROR_STOP=1 < database/003_business_schema.sql
+            
+      - name: Seed expanded business data
+        run: |
+          docker compose exec -T postgres \
+            psql -U sg_admin -d schemaguard \
+            -v ON_ERROR_STOP=1 < database/004_business_seed.sql
 
       - name: Run tests without live LLM
         run: |

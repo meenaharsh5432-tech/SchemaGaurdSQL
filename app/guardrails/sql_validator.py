@@ -7,7 +7,14 @@ class SQLValidationError(ValueError):
     """SQL does not satisfy our supported query policy."""
 
 
-ALLOWED_TABLES = {"customers", "orders"}
+ALLOWED_TABLES = {
+    "customers",
+    "orders",
+    "products",
+    "order_items",
+    "support_tickets",
+    "ticket_messages",
+}
 MAX_ROWS = 100
 
 # Exact node types: unlisted SQL structures are rejected.

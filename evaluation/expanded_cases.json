@@ -1,0 +1,38 @@
+[
+  {
+    "id": "electronic_products",
+    "question": "List product IDs, names, and current prices for products in the Electronics category, ordered by product ID.",
+    "gold_sql": "SELECT id, name, current_price FROM public.products WHERE category = 'Electronics' ORDER BY id",
+    "ordered": true
+  },
+  {
+    "id": "units_sold_per_product",
+    "question": "Show product IDs, names, and total units sold for products that have been ordered. Sort by product ID.",
+    "gold_sql": "SELECT p.id, p.name, SUM(i.quantity) AS units_sold FROM public.products AS p JOIN public.order_items AS i ON i.product_id = p.id GROUP BY p.id, p.name ORDER BY p.id",
+    "ordered": true
+  },
+  {
+    "id": "historical_product_sales",
+    "question": "Show product IDs, names, and total sales value in INR using the historical unit prices and quantities on order items. Sort by product ID.",
+    "gold_sql": "SELECT p.id, p.name, SUM(i.quantity * i.unit_price) AS sales_value FROM public.products AS p JOIN public.order_items AS i ON i.product_id = p.id GROUP BY p.id, p.name ORDER BY p.id",
+    "ordered": true
+  },
+  {
+    "id": "high_priority_open_tickets",
+    "question": "List ticket IDs and subjects for high-priority tickets whose status is open, ordered by ticket ID.",
+    "gold_sql": "SELECT id, subject FROM public.support_tickets WHERE priority = 'high' AND status = 'open' ORDER BY id",
+    "ordered": true
+  },
+  {
+    "id": "ticket_customers",
+    "question": "List ticket IDs, customer names, and ticket statuses for all support tickets, ordered by ticket ID.",
+    "gold_sql": "SELECT t.id, c.name, t.status FROM public.support_tickets AS t JOIN public.customers AS c ON c.id = t.customer_id ORDER BY t.id",
+    "ordered": true
+  },
+  {
+    "id": "message_counts",
+    "question": "Show every support ticket's ID, subject, and number of messages, including tickets with zero messages. Sort by ticket ID.",
+    "gold_sql": "SELECT t.id, t.subject, COUNT(m.id) AS message_count FROM public.support_tickets AS t LEFT JOIN public.ticket_messages AS m ON m.ticket_id = t.id GROUP BY t.id, t.subject ORDER BY t.id",
+    "ordered": true
+  }
+]
