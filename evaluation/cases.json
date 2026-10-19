@@ -1,0 +1,38 @@
+[
+  {
+    "id": "customer_count",
+    "question": "How many customers are there?",
+    "gold_sql": "SELECT COUNT(*) AS customer_count FROM public.customers",
+    "ordered": false
+  },
+  {
+    "id": "total_revenue",
+    "question": "What is the total order revenue in INR?",
+    "gold_sql": "SELECT SUM(amount) AS total_revenue FROM public.orders",
+    "ordered": false
+  },
+  {
+    "id": "high_spending_customers",
+    "question": "Which customers have spent more than 50000 INR in total? Return customer ID, name, and total spending, sorted by total spending descending.",
+    "gold_sql": "SELECT c.id, c.name, SUM(o.amount) AS total_spent FROM public.customers AS c JOIN public.orders AS o ON o.customer_id = c.id GROUP BY c.id, c.name HAVING SUM(o.amount) > 50000 ORDER BY total_spent DESC",
+    "ordered": true
+  },
+  {
+    "id": "customers_without_orders",
+    "question": "List the IDs and names of customers who have never placed an order, sorted by customer ID.",
+    "gold_sql": "SELECT c.id, c.name FROM public.customers AS c LEFT JOIN public.orders AS o ON o.customer_id = c.id WHERE o.id IS NULL ORDER BY c.id",
+    "ordered": true
+  },
+  {
+    "id": "order_count_per_customer",
+    "question": "Show every customer's ID, name, and number of orders, including customers with zero orders. Sort by customer ID.",
+    "gold_sql": "SELECT c.id, c.name, COUNT(o.id) AS order_count FROM public.customers AS c LEFT JOIN public.orders AS o ON o.customer_id = c.id GROUP BY c.id, c.name ORDER BY c.id",
+    "ordered": true
+  },
+  {
+    "id": "customers_in_delhi",
+    "question": "List the IDs and names of customers in Delhi, sorted by customer ID.",
+    "gold_sql": "SELECT id, name FROM public.customers WHERE city = 'Delhi' ORDER BY id",
+    "ordered": true
+  }
+]

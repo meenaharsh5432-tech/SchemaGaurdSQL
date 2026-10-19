@@ -1,0 +1,38 @@
+[
+  {
+    "id": "order_amount_boundary",
+    "question": "List order IDs and amounts for orders worth at least 30000 INR, ordered by order ID.",
+    "gold_sql": "SELECT id, amount FROM public.orders WHERE amount >= 30000 ORDER BY id",
+    "ordered": true
+  },
+  {
+    "id": "empty_customer_result",
+    "question": "List customer IDs and names for customers in Chennai, ordered by customer ID.",
+    "gold_sql": "SELECT id, name FROM public.customers WHERE city = 'Chennai' ORDER BY id",
+    "ordered": true
+  },
+  {
+    "id": "customers_with_orders",
+    "question": "List the IDs and names of customers who have placed one or more orders. Return one row per customer, ordered by customer ID.",
+    "gold_sql": "SELECT c.id, c.name FROM public.customers AS c LEFT JOIN public.orders AS o ON c.id = o.customer_id GROUP BY c.id, c.name HAVING COUNT(o.id) >= 1 ORDER BY c.id LIMIT 100;",
+    "ordered": true
+  },
+  {
+    "id": "average_order_amount",
+    "question": "What is the average amount of an individual order in INR across all orders? Return one value.",
+    "gold_sql": "SELECT AVG(amount) FROM public.orders",
+    "ordered": false
+  },
+  {
+    "id": "customers_with_multiple_orders",
+    "question": "List customer IDs, names, and order counts for customers with at least two orders, sorted by customer ID.",
+    "gold_sql": "SELECT c.id, c.name, COUNT(o.id) AS order_count FROM public.customers AS c JOIN public.orders AS o ON o.customer_id = c.id GROUP BY c.id, c.name HAVING COUNT(o.id) >= 2 ORDER BY c.id",
+    "ordered": true
+  },
+  {
+    "id": "largest_two_orders",
+    "question": "Return the two largest orders, showing order ID and amount. Sort by amount descending, then order ID ascending to break ties.",
+    "gold_sql": "SELECT id, amount FROM public.orders ORDER BY amount DESC, id ASC LIMIT 2",
+    "ordered": true
+  }
+]
