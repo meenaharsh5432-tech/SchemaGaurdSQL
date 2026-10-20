@@ -10,3 +10,4 @@ frontend/dist/
 .gitignore-folder-backup/
 .vscode/
 evaluation/*_report.json
+evaluation/data/

@@ -73,7 +73,14 @@ def identifier_name(identifier: exp.Identifier) -> str:
     return identifier.name.lower()
 
 
-def validate_sql(sql: str) -> str:
+def validate_sql(
+    sql: str,
+    *,
+    allowed_tables: frozenset[str] | None = None,
+) -> str:
+    permitted_tables = (
+        ALLOWED_TABLES if allowed_tables is None else allowed_tables
+    )
     if not sql.strip():
         raise SQLValidationError("SQL cannot be empty")
 
@@ -120,7 +127,7 @@ def validate_sql(sql: str) -> str:
         if not isinstance(name, exp.Identifier):
             raise SQLValidationError("Only ordinary tables are supported")
 
-        if identifier_name(name) not in ALLOWED_TABLES:
+        if identifier_name(name) not in permitted_tables:
             raise SQLValidationError("Table is not allowed")
 
     limit = tree.args.get("limit")
