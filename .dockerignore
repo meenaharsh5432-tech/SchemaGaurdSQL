@@ -1,0 +1,12 @@
+.git
+.github
+.venv
+.env
+.env.*
+.gitignore-folder-backup
+.vscode
+**/__pycache__
+.pytest_cache
+frontend
+evaluation
+tests

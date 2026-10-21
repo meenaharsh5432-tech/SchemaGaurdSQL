@@ -1,0 +1,54 @@
+services:
+  postgres:
+    volumes:
+      - ./database/002_audit.sql:/docker-entrypoint-initdb.d/02-audit.sql:ro
+      - ./database/003_business_schema.sql:/docker-entrypoint-initdb.d/03-business-schema.sql:ro
+      - ./database/004_business_seed.sql:/docker-entrypoint-initdb.d/04-business-seed.sql:ro
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: ${DOCKER_DATABASE_URL:?Set DOCKER_DATABASE_URL in .env}
+      AUDIT_DATABASE_URL: ${DOCKER_AUDIT_DATABASE_URL:?Set DOCKER_AUDIT_DATABASE_URL in .env}
+      REDIS_URL: redis://redis:6379/0
+      OLLAMA_BASE_URL: http://host.docker.internal:11434
+      OLLAMA_MODEL: qwen2.5-coder:3b
+      RESULT_CACHE_TTL_SECONDS: "60"
+      SCHEMA_RETRIEVAL_ENABLED: "false"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/ready', timeout=8)"
+      interval: 10s
+      timeout: 10s
+      retries: 6
+      start_period: 20s
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "127.0.0.1:8080:80"
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - wget
+        - -q
+        - --spider
+        - http://127.0.0.1/
+      interval: 10s
+      timeout: 5s
+      retries: 5
